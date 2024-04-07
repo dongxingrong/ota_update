@@ -7,8 +7,10 @@ import 'package:flutter/services.dart';
 /// On Android it downloads the file (with progress reporting) and triggers app installation intent.
 /// On iOS it opens safari with specified ipa url. (not yet functioning)
 class OtaUpdate {
-  static const EventChannel _progressChannel = EventChannel('sk.fourq.ota_update/stream');
-  static const MethodChannel _methodChannel = MethodChannel('sk.fourq.ota_update/method');
+  static const EventChannel _progressChannel =
+      EventChannel('sk.fourq.ota_update/stream');
+  static const MethodChannel _methodChannel =
+      MethodChannel('sk.fourq.ota_update/method');
   Stream<OtaEvent>? _progressStream;
 
   /// Get most preffered abi platform. Use if you are using
@@ -20,6 +22,10 @@ class OtaUpdate {
   /// Cancel the currently active ota download if there is one
   Future<void> cancel() async {
     return _methodChannel.invokeMethod<void>('cancel');
+  }
+
+  Future<void> install() async {
+    return _methodChannel.invokeMethod<void>('install');
   }
 
   /// Execute download and instalation of the plugin.
@@ -34,7 +40,8 @@ class OtaUpdate {
     if (destinationFilename != null && destinationFilename.contains('/')) {
       throw OtaUpdateException('Invalid filename $destinationFilename');
     }
-    final StreamController<OtaEvent> controller = StreamController<OtaEvent>.broadcast();
+    final StreamController<OtaEvent> controller =
+        StreamController<OtaEvent>.broadcast();
     if (_progressStream == null) {
       _progressChannel.receiveBroadcastStream(
         <dynamic, dynamic>{

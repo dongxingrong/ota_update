@@ -129,6 +129,9 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
                 reportError(OtaStatus.CANCELED, "Call was canceled using cancel()", null);
             }
             result.success(null);
+        } else if (call.method.equals("install")) {
+        Log.d(TAG, "onMethodCall-install");
+
         } else {
             result.notImplemented();
         }
@@ -296,6 +299,8 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
      */
     private void onDownloadComplete(final String destination, final Uri fileUri) {
         //DOWNLOAD IS COMPLETE, UNREGISTER RECEIVER AND CLOSE PROGRESS SINK
+        Log.d(TAG, "complete-url" + fileUri.toString());
+        Log.d(TAG, "complete-destination" + destination);
         final File downloadedFile = new File(destination);
         if (!downloadedFile.exists()) {
             reportError(OtaStatus.DOWNLOAD_ERROR, "File was not downloaded", null);
@@ -316,6 +321,7 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
                 return;
             }
         }
+        Log.e(TAG, "activity status: " + activity.isPa);
         //TRIGGER APK INSTALLATION
         handler.post(new Runnable() {
                          @Override
