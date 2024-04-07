@@ -83,6 +83,7 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
 
     private String insDestination;
     private Uri insUri;
+    private boolean isInBack;
 
     //FLUTTER EMBEDDING V2 - PLUGIN BINDING
     @Override
@@ -135,6 +136,17 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
         } else if (call.method.equals("install")) {
             if (insDestination != null && insDestination != "" && insUri != null) {
                 onDownloadComplete(insDestination, insUri);
+            }
+
+        } else if (call.method.equals("backStatus")) {
+            String statusStr = call.arguments.toString();
+                Log.e(TAG, "backStatus" + statusStr);
+            try {
+            JSONObject json = new JSONObject(statusStr);
+            backStatus = json.getString("status") == "1";
+
+            } catch(Exception ex) {
+                Log.e(TAG, ex.toString());
             }
 
         } else {
@@ -354,6 +366,9 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
      * @param downloadedFile Downloaded file
      */
     private void executeInstallation(Uri fileUri, File downloadedFile) {
+        if (!backStatus) {
+            return;
+        }
         Intent intent;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
