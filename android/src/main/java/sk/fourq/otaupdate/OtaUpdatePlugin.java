@@ -81,6 +81,9 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
     private String filename;
     private String checksum;
 
+    private String insDestination;
+    private Uri insUri;
+
     //FLUTTER EMBEDDING V2 - PLUGIN BINDING
     @Override
     public void onAttachedToEngine(FlutterPluginBinding binding) {
@@ -130,7 +133,9 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
             }
             result.success(null);
         } else if (call.method.equals("install")) {
-        Log.d(TAG, "onMethodCall-install");
+            if (insDestination != null && insDestination != "" && insUri != null) {
+                onDownloadComplete(insDestination, insUri);
+            }
 
         } else {
             result.notImplemented();
@@ -252,6 +257,8 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
             }
 
             currentCall = client.newCall(request.build());
+            insDestination = null;
+            insUri = null;
             currentCall.enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -277,6 +284,8 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
                         currentCall = null;
                         return;
                     }
+                    insDestination = destination;
+                    insUri = fileUri;
                     onDownloadComplete(destination, fileUri);
                     currentCall = null;
                 }
