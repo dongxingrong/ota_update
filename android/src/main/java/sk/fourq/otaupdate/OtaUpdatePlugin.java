@@ -321,7 +321,6 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
                 return;
             }
         }
-        Log.e(TAG, "activity status: " + activity.isPa);
         //TRIGGER APK INSTALLATION
         handler.post(new Runnable() {
                          @Override
