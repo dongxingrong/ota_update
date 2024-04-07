@@ -139,15 +139,9 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
             }
 
         } else if (call.method.equals("backStatus")) {
-            String statusStr = call.arguments.toString();
+            String statusStr = call.arguments("backStatus") as String;
                 Log.e(TAG, "backStatus" + statusStr);
-            try {
-            JSONObject json = new JSONObject(statusStr);
-            isInBack = json.getString("status") == "1";
-
-            } catch(Exception ex) {
-                Log.e(TAG, ex.toString());
-            }
+                isInback = "0" == statusStr;
 
         } else {
             result.notImplemented();
@@ -366,7 +360,7 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
      * @param downloadedFile Downloaded file
      */
     private void executeInstallation(Uri fileUri, File downloadedFile) {
-        if (!isInBack) {
+        if (isInBack) {
             return;
         }
         Intent intent;
