@@ -139,7 +139,7 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
             }
 
         } else if (call.method.equals("backStatus")) {
-            String statusStr = call.arguments("backStatus") as String;
+            String statusStr = call.arguments("backStatus");
                 Log.e(TAG, "backStatus" + statusStr);
                 isInback = "0" == statusStr;
 
