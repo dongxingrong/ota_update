@@ -313,6 +313,8 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
         final File downloadedFile = new File(destination);
         if (!downloadedFile.exists()) {
             reportError(OtaStatus.DOWNLOAD_ERROR, "File was not downloaded", null);
+
+        Log.d(TAG, "downloadedFile not exist");
             return;
         }
 
@@ -334,6 +336,7 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
         handler.post(new Runnable() {
                          @Override
                          public void run() {
+        Log.d(TAG, "executeInstallation runnable");
                              executeInstallation(fileUri, downloadedFile);
                          }
                      }
@@ -353,6 +356,8 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
     private void executeInstallation(Uri fileUri, File downloadedFile) {
         Intent intent;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+
+        Log.d(TAG, "executeInstallation big");
             //AUTHORITY NEEDS TO BE THE SAME ALSO IN MANIFEST
             Uri apkUri = FileProvider.getUriForFile(context, androidProviderAuthority, downloadedFile);
             intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
@@ -360,6 +365,7 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
             intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         } else {
+        Log.d(TAG, "executeInstallation small");
             intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(fileUri, "application/vnd.android.package-archive");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -369,6 +375,8 @@ public class OtaUpdatePlugin implements FlutterPlugin, ActivityAware, EventChann
             //NOTE: We have to start intent before sending event to stream
             //if application tries to programatically terminate app it may produce race condition
             //and application may end before intent is dispatched
+
+        Log.d(TAG, "executeInstallation link");
             context.startActivity(intent);
             progressSink.success(Arrays.asList("" + OtaStatus.INSTALLING.ordinal(), ""));
             progressSink.endOfStream();
