@@ -28,10 +28,6 @@ class OtaUpdate {
     return _methodChannel.invokeMethod<void>('install');
   }
 
-  Future<void> backStatus(String status) async {
-    return _methodChannel.invokeMethod<void>('backStatus', {'status': status});
-  }
-
   /// Execute download and instalation of the plugin.
   /// Download progress and all success or error states are publish in stream as OtaEvent
   Stream<OtaEvent> execute(
@@ -58,7 +54,8 @@ class OtaUpdate {
       ).listen((dynamic event) {
         final OtaEvent otaEvent = _toOtaEvent(event.cast<String>());
         controller.add(otaEvent);
-        if (otaEvent.status != OtaStatus.DOWNLOADING) {
+        if (otaEvent.status != OtaStatus.DOWNLOADING &&
+            otaEvent.status != OtaStatus.DOWNLOADED) {
           controller.close();
         }
       }).onError((Object error) {
@@ -92,6 +89,7 @@ class OtaEvent {
 enum OtaStatus {
   /// FILE IS BEING DOWNLOADED
   DOWNLOADING,
+  DOWNLOADED,
 
   /// INSTALLATION HAS BEEN TRIGGERED
   INSTALLING,
