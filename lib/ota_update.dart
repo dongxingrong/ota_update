@@ -58,9 +58,15 @@ class OtaUpdate {
             otaEvent.status != OtaStatus.DOWNLOADED) {
           controller.close();
         }
-      }).onError((Object error) {
+      }).onError((dynamic error) {
         if (error is PlatformException) {
           controller.add(_toOtaEvent(<String?>[error.code, error.message]));
+        } else {
+          final OtaEvent otaEvent = _toOtaEvent(error.cast<String>());
+          if (error.code == OtaStatus.PERMISSION_NOT_GRANTED_ERROR) {
+            controller.add(otaEvent);
+            controller.close();
+          }
         }
       });
       _progressStream = controller.stream;
